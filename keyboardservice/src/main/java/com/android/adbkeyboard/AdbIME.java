@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
+import android.view.inputmethod.EditorInfo;
 
 public class AdbIME extends InputMethodService {
 	private String IME_MESSAGE = "ADB_INPUT_TEXT";
@@ -19,6 +20,7 @@ public class AdbIME extends InputMethodService {
 	private String IME_KEYCODE = "ADB_INPUT_CODE";
 	private String IME_META_KEYCODE = "ADB_INPUT_MCODE";
 	private String IME_EDITORCODE = "ADB_EDITOR_CODE";
+	private String IME_EDITORACTION = "ADB_EDITOR_ACTION";
 	private String IME_MESSAGE_B64 = "ADB_INPUT_B64";
 	private String IME_CLEAR_TEXT = "ADB_CLEAR_TEXT";
 	private BroadcastReceiver mReceiver = null;
@@ -33,6 +35,7 @@ public class AdbIME extends InputMethodService {
 			filter.addAction(IME_KEYCODE);
 			filter.addAction(IME_MESSAGE); // IME_META_KEYCODE // Change IME_MESSAGE to get more values.
 			filter.addAction(IME_EDITORCODE);
+			filter.addAction(IME_EDITORACTION);
 			filter.addAction(IME_MESSAGE_B64);
 			filter.addAction(IME_CLEAR_TEXT);
 			mReceiver = new AdbReceiver();
@@ -149,7 +152,15 @@ public class AdbIME extends InputMethodService {
 						ic.performEditorAction(code);
 				}
 			}
-
+			
+                       if (intent.getAction().equals(IME_EDITORACTION)) {
+                               InputConnection ic = getCurrentInputConnection();
+                               EditorInfo editorInfo=getCurrentInputEditorInfo();
+                               if (ic != null) {
+                                       ic.performEditorAction(editorInfo.imeOptions);
+                               }
+                        }
+			
 			if (intent.getAction().equals(IME_CLEAR_TEXT)) {
 				InputConnection ic = getCurrentInputConnection();
 				if (ic != null) {
